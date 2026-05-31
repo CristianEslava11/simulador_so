@@ -310,36 +310,54 @@ class MainWindow(ctk.CTk):
             row=0, column=0, columnspan=4, sticky="w", padx=10, pady=(8, 4)
         )
 
+        ctk.CTkLabel(panel, text="Planificador").grid(
+            row=1, column=0, padx=8, pady=(4, 0), sticky="w"
+        )
+        ctk.CTkLabel(panel, text="Reemplazo memoria").grid(
+            row=1, column=1, padx=8, pady=(4, 0), sticky="w"
+        )
+        ctk.CTkLabel(panel, text="Quantum (Round Robin)").grid(
+            row=1, column=2, padx=8, pady=(4, 0), sticky="w"
+        )
         ctk.CTkOptionMenu(
             panel,
             values=["Round Robin", "SJF", "Priority"],
             variable=self.scheduler_var,
             command=lambda _: self.restart_simulation(),
-        ).grid(row=1, column=0, padx=8, pady=6, sticky="ew")
+        ).grid(row=2, column=0, padx=8, pady=(2, 8), sticky="ew")
         ctk.CTkOptionMenu(
             panel,
             values=["FIFO", "LRU"],
             variable=self.replacement_var,
             command=lambda _: self.restart_simulation(),
-        ).grid(row=1, column=1, padx=8, pady=6, sticky="ew")
-        ctk.CTkEntry(panel, textvariable=self.quantum_var, placeholder_text="Quantum").grid(
-            row=1, column=2, padx=8, pady=6, sticky="ew"
+        ).grid(row=2, column=1, padx=8, pady=(2, 8), sticky="ew")
+        ctk.CTkEntry(panel, textvariable=self.quantum_var, placeholder_text="Ej: 2").grid(
+            row=2, column=2, padx=8, pady=(2, 8), sticky="ew"
         )
         ctk.CTkButton(panel, text="Aplicar", command=self.restart_simulation).grid(
-            row=1, column=3, padx=8, pady=6, sticky="ew"
+            row=2, column=3, padx=8, pady=(2, 8), sticky="ew"
         )
 
-        ctk.CTkEntry(panel, textvariable=self.process_name_var, placeholder_text="Nombre").grid(
-            row=2, column=0, padx=8, pady=(2, 10), sticky="ew"
+        ctk.CTkLabel(panel, text="Nombre proceso").grid(
+            row=3, column=0, padx=8, pady=(2, 0), sticky="w"
         )
-        ctk.CTkEntry(panel, textvariable=self.burst_var, placeholder_text="Burst").grid(
-            row=2, column=1, padx=8, pady=(2, 10), sticky="ew"
+        ctk.CTkLabel(panel, text="Burst CPU").grid(
+            row=3, column=1, padx=8, pady=(2, 0), sticky="w"
         )
-        ctk.CTkEntry(panel, textvariable=self.priority_var, placeholder_text="Prioridad").grid(
-            row=2, column=2, padx=8, pady=(2, 10), sticky="ew"
+        ctk.CTkLabel(panel, text="Prioridad").grid(
+            row=3, column=2, padx=8, pady=(2, 0), sticky="w"
+        )
+        ctk.CTkEntry(panel, textvariable=self.process_name_var, placeholder_text="Ej: P1").grid(
+            row=4, column=0, padx=8, pady=(2, 10), sticky="ew"
+        )
+        ctk.CTkEntry(panel, textvariable=self.burst_var, placeholder_text="Ej: 5").grid(
+            row=4, column=1, padx=8, pady=(2, 10), sticky="ew"
+        )
+        ctk.CTkEntry(panel, textvariable=self.priority_var, placeholder_text="Ej: 1").grid(
+            row=4, column=2, padx=8, pady=(2, 10), sticky="ew"
         )
         ctk.CTkButton(panel, text="Crear", command=self.create_process).grid(
-            row=2, column=3, padx=8, pady=(2, 10), sticky="ew"
+            row=4, column=3, padx=8, pady=(2, 10), sticky="ew"
         )
 
     def _cpu_metrics_panel(self, parent, row: int) -> None:
