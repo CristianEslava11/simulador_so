@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import importlib
 import queue
+import random
 import tkinter as tk
 from tkinter import filedialog, ttk
 
@@ -209,7 +210,7 @@ class MainWindow(ctk.CTk):
             ("Iniciar", self.start_simulation),
             ("Pausar", self.pause_simulation),
             ("Tick Manual", self.manual_tick),
-            ("Crear Proceso", self.create_process),
+            ("Crear 5 Procesos", self.create_sample_processes),
             ("Reiniciar", self.restart_simulation),
             ("Exportar TXT", self.export_txt),
             ("Exportar CSV", self.export_csv),
@@ -365,7 +366,7 @@ class MainWindow(ctk.CTk):
         panel.grid(row=row, column=0, sticky="ew", pady=(0, 8))
         panel.grid_columnconfigure(0, weight=1)
 
-        ctk.CTkLabel(panel, text="CPU y Metricas", font=ctk.CTkFont(size=16, weight="bold")).grid(
+        ctk.CTkLabel(panel, text="CPU y Métricas", font=ctk.CTkFont(size=16, weight="bold")).grid(
             row=0, column=0, sticky="w", padx=10, pady=(8, 4)
         )
         self.cpu_label = ctk.CTkLabel(panel, text="", justify="left", anchor="w")
@@ -414,6 +415,17 @@ class MainWindow(ctk.CTk):
 
         self.kernel.create_process(name=name, burst_time=burst_time, priority=priority)
         self.process_name_var.set("")
+        self._refresh_all()
+
+    def create_sample_processes(self) -> None:
+        """Crea cinco procesos de prueba con datos variados."""
+        for _ in range(5):
+            self.process_counter += 1
+            self.kernel.create_process(
+                name=f"P{self.process_counter}",
+                burst_time=random.randint(2, 9),
+                priority=random.randint(0, 4),
+            )
         self._refresh_all()
 
     def restart_simulation(self) -> None:
@@ -493,7 +505,7 @@ class MainWindow(ctk.CTk):
         else:
             current_text = (
                 f"Proceso actual: PID {current.pid} - {current.name}\n"
-                f"CPU time acumulado: {current.cpu_time}\n"
+                f"Tiempo de CPU acumulado: {current.cpu_time}\n"
                 f"CPU restante: {current.remaining_time}"
             )
             progress = current.cpu_time / current.burst_time if current.burst_time else 0
@@ -501,8 +513,8 @@ class MainWindow(ctk.CTk):
         self.cpu_label.configure(
             text=(
                 f"{current_text}\n"
-                f"Context Switches: {self.metrics_logger.context_switches}\n"
-                f"Utilizacion CPU: {self.cpu.utilization:.2f}%"
+                f"Cambios de contexto: {self.metrics_logger.context_switches}\n"
+                f"Utilización de CPU: {self.cpu.utilization:.2f}%"
             )
         )
         self.cpu_progress.set(min(1, progress))
@@ -511,14 +523,14 @@ class MainWindow(ctk.CTk):
         self.metrics_label.configure(
             text=(
                 "CPU\n"
-                f"WT Promedio: {summary['avg_waiting_time']:.2f}\n"
-                f"TT Promedio: {summary['avg_turnaround_time']:.2f}\n\n"
+                f"Tiempo de espera promedio: {summary['avg_waiting_time']:.2f}\n"
+                f"Tiempo de retorno promedio: {summary['avg_turnaround_time']:.2f}\n\n"
                 "Memoria\n"
-                f"Page Faults: {summary['page_faults']}\n"
-                f"Page Hits: {summary['page_hits']}\n"
-                f"Page Replacements: {summary['page_replacements']}\n\n"
+                f"Fallos de página: {summary['page_faults']}\n"
+                f"Aciertos de página: {summary['page_hits']}\n"
+                f"Reemplazos de página: {summary['page_replacements']}\n\n"
                 "Archivos\n"
-                f"File Conflicts: {summary['file_conflicts']}"
+                f"Conflictos de archivo: {summary['file_conflicts']}"
             )
         )
 

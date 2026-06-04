@@ -81,8 +81,8 @@ def test_kernel_generates_file_lock_conflict_and_unlock_events():
     config = SimulationConfig(
         num_frames=3,
         pages_per_process=2,
-        quantum=4,
-        num_files=1,
+        quantum=2,
+        num_files=2,
     )
     event_bus = EventBus()
     scheduler = RoundRobinScheduler(quantum=config.quantum)
@@ -116,5 +116,18 @@ def test_kernel_generates_file_lock_conflict_and_unlock_events():
     assert FILE_LOCKED in event_types
     assert FILE_CONFLICT in event_types
     assert FILE_UNLOCKED in event_types
+    locked_files = {
+        event.data["file"]
+        for event in events
+        if event.event_type == FILE_LOCKED
+    }
+    assert locked_files == {"archivo_0", "archivo_1"}
+    assert any(
+        event.event_type == FILE_CONFLICT
+        and event.data["file"] == "archivo_0"
+        and event.data["locked_by"] == 1
+        for event in events
+    )
     assert metrics.get_summary()["file_conflicts"] >= 1
     assert file_manager.files["archivo_0"].locked_by is None
+    assert file_manager.files["archivo_1"].locked_by is None

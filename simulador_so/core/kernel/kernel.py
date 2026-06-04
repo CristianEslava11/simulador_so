@@ -150,11 +150,17 @@ class Kernel:
         if not self.file_manager.files:
             return
 
-        file_name = "archivo_0"
+        file_name = self._select_file_for_process(process)
         self.file_manager.current_tick = self.current_tick
         if self.file_manager.request_access(process.pid, file_name):
-            hold_until = self.current_tick + self.config.quantum + 2
+            hold_until = self.current_tick + self.config.quantum + 3
             self._file_holds[process.pid] = (file_name, hold_until)
+
+    def _select_file_for_process(self, process: Process) -> str:
+        """Selecciona un archivo objetivo para mostrar concurrencia visible."""
+        usable_files = min(2, max(1, self.config.num_files))
+        file_index = (process.pid - 1) % usable_files
+        return f"archivo_{file_index}"
 
     def _release_expired_file_locks(self) -> None:
         """Libera archivos cuyo tiempo simulado de uso ya terminÃ³."""
